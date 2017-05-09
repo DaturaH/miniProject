@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.UserSubcHouseLiveFormMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.UserSubcHouseLiveForm" >
+    <id column="live_sub_info_id" property="liveSubInfoId" jdbcType="VARCHAR" />
+    <result column="house_id" property="houseId" jdbcType="VARCHAR" />
+    <result column="pub_user_id" property="pubUserId" jdbcType="VARCHAR" />
+    <result column="sub_user_id" property="subUserId" jdbcType="VARCHAR" />
+    <result column="sub_begin_time" property="subBeginTime" jdbcType="TIMESTAMP" />
+    <result column="sub_end_time" property="subEndTime" jdbcType="TIMESTAMP" />
+    <result column="verify_flag" property="verifyFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    live_sub_info_id, house_id, pub_user_id, sub_user_id, sub_begin_time, sub_end_time, 
+    verify_flag
+  </sql>
+  <select id="selectHouseLiveTime" resultType="java.util.Date" parameterType="java.lang.String" >
+    select 
+    sub_begin_time
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} and verify_flag = 1
+    and ((UNIX_TIMESTAMP(sub_begin_time) &lt; UNIX_TIMESTAMP(NOW()) AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(sub_begin_time)&lt; 1800)) OR sub_begin_time>NOW())
+	ORDER BY sub_begin_time ASC
+  </select>
+  
+  
+  <select id="selectHouseDailyLiveCountByHouseId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} and verify_flag = 1
+    and (sub_begin_time &gt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}+1)) 
+    group by sub_begin_time
+  </select>
+  
+  <select id="getUserDailyInfoCount" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} 
+    and sub_user_id = #{1,jdbcType=VARCHAR}
+    and (sub_begin_time &gt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}+1)) 
+    and (verify_flag=1 or verify_flag=0)
+  </select>
+  
+  <select id="getOwnVerifyTimeListById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} 
+     and sub_user_id = #{1,jdbcType=VARCHAR}
+     and (sub_begin_time &gt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}+1)) 
+     and verify_flag=1
+     group by sub_begin_time
+  </select>
+  
+  <select id="getOwnOtherVerifyTimeListById" resultType="java.util.Date" parameterType="java.lang.String" >
+    select 
+    sub_begin_time
+    from tbl_live_sub_info
+    where house_id != #{0,jdbcType=VARCHAR}
+    and sub_user_id = #{1,jdbcType=VARCHAR}
+    and verify_flag=1 
+    and (sub_begin_time &gt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}+1))
+    group by sub_begin_time
+  </select>
+  
+  
+  
+  <select id="getOwnSubcHouseLiveListById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} and sub_user_id = #{1,jdbcType=VARCHAR}
+     and (sub_begin_time &gt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}+1)) 
+     and verify_flag=0
+     group by sub_begin_time
+  </select>
+  
+  
+  
+  
+  
+  <select id="getOtherVerifyTimeListById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR}
+    and sub_begin_time not in 
+     (select sub_begin_time from tbl_live_sub_info where sub_user_id = #{1,jdbcType=VARCHAR} and house_id = #{0,jdbcType=VARCHAR})
+     and (sub_begin_time &gt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{2,jdbcType=INTEGER}+1)) 
+     and verify_flag=1
+     group by sub_begin_time
+  </select>
+  
+  
+  <select id="getLandlordVerifyTimeListById" resultType="java.util.Date" parameterType="java.lang.String" >
+    select 
+    sub_begin_time
+    from tbl_live_sub_info
+    where pub_user_id = (select user_id from tbl_house_info where house_id = #{0,jdbcType=VARCHAR})
+    and verify_flag=1 
+    and house_id != #{0,jdbcType=VARCHAR}
+    and (sub_begin_time &gt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}+1))
+    group by sub_begin_time
+  </select>
+  
+  
+  <select id="selectHouseLiveByBeginTime" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+    count(*)
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR}
+    and sub_begin_time=#{1,jdbcType=TIMESTAMP}
+    and verify_flag=1
+  </select>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_sub_info
+    where live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_live_sub_info
+    where live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    insert into tbl_live_sub_info (live_sub_info_id, house_id, pub_user_id, 
+      sub_user_id, sub_begin_time, sub_end_time, 
+      verify_flag)
+    values (#{liveSubInfoId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{pubUserId,jdbcType=VARCHAR}, 
+      #{subUserId,jdbcType=VARCHAR}, #{subBeginTime,jdbcType=TIMESTAMP}, #{subEndTime,jdbcType=TIMESTAMP}, 
+      #{verifyFlag,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    insert into tbl_live_sub_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="liveSubInfoId != null" >
+        live_sub_info_id,
+      </if>
+      <if test="houseId != null" >
+        house_id,
+      </if>
+      <if test="pubUserId != null" >
+        pub_user_id,
+      </if>
+      <if test="subUserId != null" >
+        sub_user_id,
+      </if>
+      <if test="subBeginTime != null" >
+        sub_begin_time,
+      </if>
+      <if test="subEndTime != null" >
+        sub_end_time,
+      </if>
+      <if test="verifyFlag != null" >
+        verify_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="liveSubInfoId != null" >
+        #{liveSubInfoId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pubUserId != null" >
+        #{pubUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserId != null" >
+        #{subUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subBeginTime != null" >
+        #{subBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="subEndTime != null" >
+        #{subEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyFlag != null" >
+        #{verifyFlag,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="cancelHouseLiveBySelf" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    <set >
+      <if test="verifyFlag != null" >
+        verify_flag = 3,
+      </if>
+    </set>
+    <where>
+      <if test="liveSubInfoId != null" >
+        live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserId != null" >
+        sub_user_id = #{subUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyFlag != null" >
+        verify_flag  &lt; 2
+      </if>
+    </where>
+  </update>
+  
+  <update id="cancelHouseLiveBySelfInUserSchedule" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    set
+        verify_flag = #{verifyFlag,jdbcType=INTEGER},
+		sub_end_time =#{subEndTime,jdbcType=TIMESTAMP}
+		where
+        live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR}
+        and
+        sub_user_id = #{subUserId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <update id="updateVerifyFlagByPublicKeySelective" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    <set>
+      <if test="verifyFlag != null" >
+        verify_flag = #{verifyFlag,jdbcType=INTEGER},
+      </if>
+      <if test="subEndTime != null" >
+        sub_end_time = #{subEndTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <where>
+      <if test="liveSubInfoId != null" >
+        live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        house_id = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pubUserId != null" >
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserId != null" >
+       sub_user_id = #{subUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subBeginTime != null" >
+         sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP},
+      </if>
+    </where>
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    <set >
+      <if test="houseId != null" >
+        house_id = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pubUserId != null" >
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserId != null" >
+        sub_user_id = #{subUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subBeginTime != null" >
+        sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="subEndTime != null" >
+        sub_end_time = #{subEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyFlag != null" >
+        verify_flag = #{verifyFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    set house_id = #{houseId,jdbcType=VARCHAR},
+      pub_user_id = #{pubUserId,jdbcType=VARCHAR},
+      sub_user_id = #{subUserId,jdbcType=VARCHAR},
+      sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP},
+      sub_end_time = #{subEndTime,jdbcType=TIMESTAMP},
+      verify_flag = #{verifyFlag,jdbcType=INTEGER}
+    where live_sub_info_id = #{liveSubInfoId,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- add by LIMIN : 获取最近的直播确认时间；若没有，则返回空 -->
+  <select id="getNearastSubBeginTime" resultType="java.util.Date" parameterType="java.lang.String" >
+    select 
+    sub_begin_time
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} and verify_flag = 1
+    and ((UNIX_TIMESTAMP(sub_begin_time) &lt; UNIX_TIMESTAMP(NOW()) AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(sub_begin_time)&lt; 1800)) OR sub_begin_time>NOW())
+	ORDER BY sub_begin_time ASC
+	LIMIT 0,1
+  </select>
+  
+  <!-- add by LIMIN:清除记录时，根据用户id清除verifyFlag为2和3的记录 -->
+  <delete id="deleteRecordsByUserIdAndFlag" >
+    delete from tbl_live_sub_info
+    where sub_user_id = #{0,jdbcType=VARCHAR} and (verify_flag = 2 or verify_flag = 3)
+  </delete>
+</mapper>

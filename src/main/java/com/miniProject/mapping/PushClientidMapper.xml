@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.PushClientidMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.PushClientidForm" >
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="client_id" property="clientId" jdbcType="VARCHAR" />
+    <result column="receive_msg" property="receiveMsg" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, client_id, receive_msg
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_push_clientid_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_push_clientid_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.miniProject.model.PushClientidForm" >
+    insert into tbl_push_clientid_info (user_id, client_id, receive_msg
+      )
+    values (#{userId,jdbcType=VARCHAR}, #{clientId,jdbcType=VARCHAR}, #{receiveMsg,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.PushClientidForm" >
+    insert into tbl_push_clientid_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="clientId != null" >
+        client_id,
+      </if>
+      <if test="receiveMsg != null" >
+        receive_msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientId != null" >
+        #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveMsg != null" >
+        #{receiveMsg,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miniProject.model.PushClientidForm" >
+    update tbl_push_clientid_info
+    <set >
+      <if test="clientId != null" >
+        client_id = #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveMsg != null" >
+        receive_msg = #{receiveMsg,jdbcType=BIT},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miniProject.model.PushClientidForm" >
+    update tbl_push_clientid_info
+    set client_id = #{clientId,jdbcType=VARCHAR},
+      receive_msg = #{receiveMsg,jdbcType=BIT}
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 修改是否接收推送消息开关 -->
+  <update id="updateReceiveMsgFlagByUserId" >
+    update tbl_push_clientid_info
+    set receive_msg = #{1,jdbcType=BIT}
+    where user_id = #{0,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 查询是否接收消息提醒 -->
+  <select id="getReceiveMsgFlagByUserId" resultType="java.lang.Boolean" parameterType="java.lang.String" >
+    select 
+   	receive_msg
+    from tbl_push_clientid_info
+    where user_id = #{0,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据用户clientid删除userId与clientId的绑定 -->
+  <delete id="deleteByClientId" parameterType="java.lang.String" >
+    delete from tbl_push_clientid_info
+    where client_id = #{0,jdbcType=VARCHAR}
+  </delete>
+</mapper>

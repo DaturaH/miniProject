@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miniProject.dao.HouseWantedInfoMapper">
+  <resultMap id="BaseResultMap" type="com.miniProject.model.HouseWantedInfo">
+    <id column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="village_name" jdbcType="VARCHAR" property="villageName" />
+    <result column="distance" jdbcType="INTEGER" property="distance" />
+    <result column="house_type" jdbcType="VARCHAR" property="houseType" />
+    <result column="area" jdbcType="INTEGER" property="area" />
+    <result column="sharing_way" jdbcType="INTEGER" property="sharingWay" />
+    <result column="price_top" jdbcType="INTEGER" property="priceTop" />
+    <result column="price_bottom" jdbcType="INTEGER" property="priceBottom" />
+    <result column="house_orientation" jdbcType="INTEGER" property="houseOrientation" />
+    <result column="decoration" jdbcType="INTEGER" property="decoration" />
+    <result column="pay_way" jdbcType="INTEGER" property="payWay" />
+    <result column="fitment" jdbcType="INTEGER" property="fitment" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, longitude, latitude, location, village_name, distance, house_type, area, 
+    sharing_way, price_top, price_bottom, house_orientation, decoration, pay_way, fitment
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_house_wanted_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tbl_house_wanted_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.miniProject.model.HouseWantedInfo">
+    insert into tbl_house_wanted_info (user_id, longitude, latitude, 
+      location, village_name, distance, 
+      house_type, area, sharing_way, 
+      price_top, price_bottom, house_orientation, 
+      decoration, pay_way, fitment
+      )
+    values (#{userId,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
+      #{location,jdbcType=VARCHAR}, #{villageName,jdbcType=VARCHAR}, #{distance,jdbcType=INTEGER}, 
+      #{houseType,jdbcType=VARCHAR}, #{area,jdbcType=INTEGER}, #{sharingWay,jdbcType=INTEGER}, 
+      #{priceTop,jdbcType=INTEGER}, #{priceBottom,jdbcType=INTEGER}, #{houseOrientation,jdbcType=INTEGER}, 
+      #{decoration,jdbcType=INTEGER}, #{payWay,jdbcType=INTEGER}, #{fitment,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.HouseWantedInfo">
+    insert into tbl_house_wanted_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="longitude != null">
+        longitude,
+      </if>
+      <if test="latitude != null">
+        latitude,
+      </if>
+      <if test="location != null">
+        location,
+      </if>
+      <if test="villageName != null">
+        village_name,
+      </if>
+      <if test="distance != null">
+        distance,
+      </if>
+      <if test="houseType != null">
+        house_type,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="sharingWay != null">
+        sharing_way,
+      </if>
+      <if test="priceTop != null">
+        price_top,
+      </if>
+      <if test="priceBottom != null">
+        price_bottom,
+      </if>
+      <if test="houseOrientation != null">
+        house_orientation,
+      </if>
+      <if test="decoration != null">
+        decoration,
+      </if>
+      <if test="payWay != null">
+        pay_way,
+      </if>
+      <if test="fitment != null">
+        fitment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="villageName != null">
+        #{villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="distance != null">
+        #{distance,jdbcType=INTEGER},
+      </if>
+      <if test="houseType != null">
+        #{houseType,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=INTEGER},
+      </if>
+      <if test="sharingWay != null">
+        #{sharingWay,jdbcType=INTEGER},
+      </if>
+      <if test="priceTop != null">
+        #{priceTop,jdbcType=INTEGER},
+      </if>
+      <if test="priceBottom != null">
+        #{priceBottom,jdbcType=INTEGER},
+      </if>
+      <if test="houseOrientation != null">
+        #{houseOrientation,jdbcType=INTEGER},
+      </if>
+      <if test="decoration != null">
+        #{decoration,jdbcType=INTEGER},
+      </if>
+      <if test="payWay != null">
+        #{payWay,jdbcType=INTEGER},
+      </if>
+      <if test="fitment != null">
+        #{fitment,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miniProject.model.HouseWantedInfo">
+    update tbl_house_wanted_info
+    <set>
+      <if test="longitude != null">
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="villageName != null">
+        village_name = #{villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="distance != null">
+        distance = #{distance,jdbcType=INTEGER},
+      </if>
+      <if test="houseType != null">
+        house_type = #{houseType,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=INTEGER},
+      </if>
+      <if test="sharingWay != null">
+        sharing_way = #{sharingWay,jdbcType=INTEGER},
+      </if>
+      <if test="priceTop != null">
+        price_top = #{priceTop,jdbcType=INTEGER},
+      </if>
+      <if test="priceBottom != null">
+        price_bottom = #{priceBottom,jdbcType=INTEGER},
+      </if>
+      <if test="houseOrientation != null">
+        house_orientation = #{houseOrientation,jdbcType=INTEGER},
+      </if>
+      <if test="decoration != null">
+        decoration = #{decoration,jdbcType=INTEGER},
+      </if>
+      <if test="payWay != null">
+        pay_way = #{payWay,jdbcType=INTEGER},
+      </if>
+      <if test="fitment != null">
+        fitment = #{fitment,jdbcType=INTEGER},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miniProject.model.HouseWantedInfo">
+    update tbl_house_wanted_info
+    set longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      location = #{location,jdbcType=VARCHAR},
+      village_name = #{villageName,jdbcType=VARCHAR},
+      distance = #{distance,jdbcType=INTEGER},
+      house_type = #{houseType,jdbcType=VARCHAR},
+      area = #{area,jdbcType=INTEGER},
+      sharing_way = #{sharingWay,jdbcType=INTEGER},
+      price_top = #{priceTop,jdbcType=INTEGER},
+      price_bottom = #{priceBottom,jdbcType=INTEGER},
+      house_orientation = #{houseOrientation,jdbcType=INTEGER},
+      decoration = #{decoration,jdbcType=INTEGER},
+      pay_way = #{payWay,jdbcType=INTEGER},
+      fitment = #{fitment,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+</mapper>

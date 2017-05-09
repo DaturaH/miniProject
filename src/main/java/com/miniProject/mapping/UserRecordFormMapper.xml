@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.UserHisRecordFormMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.UserRecordForm" >
+    <result column="record_house_id" property="recordHouseId" jdbcType="VARCHAR" />
+    <result column="record_house_name" property="recordHouseName" jdbcType="VARCHAR" />
+    <result column="record_id" property="recordId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="TIMESTAMP" />
+    <result column="record_type" property="recordType" jdbcType="INTEGER" />
+  </resultMap> 
+  <sql id="Base_Column_List" >
+    record_house_id,record_house_name,record_id,
+    user_id,record_time,record_type
+  </sql>
+  <select id="getUserScheduleByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from UserRecord
+    where user_id = #{0,jdbcType=VARCHAR}
+    ORDER BY record_time ASC
+    LIMIT #{1,jdbcType=INTEGER},10
+  </select>
+  <select id="getUserAllScheduleByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from UserRecord
+    where user_id = #{0,jdbcType=VARCHAR}
+    ORDER BY record_time ASC
+  </select>
+  
+  <select id="getUserRecordCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+    COUNT(*)
+    from UserRecord
+    where user_id = #{0,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteUserRecordByPublicKey" parameterType="java.lang.String" >
+    delete from tbl_record_info
+    where record_id = #{0,jdbcType=VARCHAR}
+    and view_user_id = #{1,jdbcType=VARCHAR}
+  </delete>
+  
+  <!-- 删除用户历史记录 -->
+  <delete id="deleteAllRecordsByUserId" parameterType="java.lang.String" >
+    delete from tbl_record_info
+    where view_user_id = #{0,jdbcType=VARCHAR}
+  </delete>
+</mapper>

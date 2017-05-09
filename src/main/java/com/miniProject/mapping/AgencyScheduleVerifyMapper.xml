@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.AgencyScheduleVerifyMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.AgencyScheduleVerifyForm" >
+    <result column="sub_user_id" property="subUserId" jdbcType="VARCHAR" />
+    <result column="sub_user_name" property="subUserName" jdbcType="VARCHAR" />
+    <result column="sub_phone_number" property="subPhoneNumber" jdbcType="VARCHAR" />
+    <result column="portrait_file_name" property="portraitFileName" jdbcType="VARCHAR" />
+    <result column="house_id" property="houseId" jdbcType="VARCHAR" />
+    <result column="houseName" property="housename" jdbcType="VARCHAR" />
+    <result column="pub_user_type" property="pubUserType" jdbcType="INTEGER" />
+    <result column="house_statu" property="houseStatu" jdbcType="BIT" />
+    <result column="pub_user_id" property="pubUserId" jdbcType="VARCHAR" />
+    <result column="sub_begin_time" property="subBeginTime" jdbcType="TIMESTAMP" />
+    <result column="verify_flag" property="verifyFlag" jdbcType="INTEGER" />
+    <result column="live_sub_info_id" property="liveSubInfoId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMap1" type="com.miniProject.model.subAgency" >
+    <result column="house_id" property="houseId" jdbcType="VARCHAR" />
+    <result column="houseName" property="housename" jdbcType="VARCHAR" />
+    <result column="pub_user_type" property="pubUserType" jdbcType="INTEGER" />
+    <result column="house_statu" property="houseStatu" jdbcType="BIT" />
+    <result column="pub_user_id" property="pubUserId" jdbcType="VARCHAR" />
+    <result column="sub_begin_time" property="subBeginTime" jdbcType="TIMESTAMP" />
+    <result column="verify_flag" property="verifyFlag" jdbcType="INTEGER" />
+    <result column="live_sub_info_id" property="liveSubInfoId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="BaseResultMap2" type="com.miniProject.model.UserSubcHouseLiveForm" >
+    <id column="live_sub_info_id" property="liveSubInfoId" jdbcType="VARCHAR" />
+    <result column="house_id" property="houseId" jdbcType="VARCHAR" />
+    <result column="pub_user_id" property="pubUserId" jdbcType="VARCHAR" />
+    <result column="sub_user_id" property="subUserId" jdbcType="VARCHAR" />
+    <result column="sub_begin_time" property="subBeginTime" jdbcType="TIMESTAMP" />
+    <result column="sub_end_time" property="subEndTime" jdbcType="TIMESTAMP" />
+    <result column="verify_flag" property="verifyFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    sub_user_id,portrait_file_name,live_sub_info_id,sub_user_name, sub_phone_number, house_id, houseName, house_statu, pub_user_id,pub_user_type, verify_flag, sub_begin_time
+  </sql>
+  <sql id="Base_Column_List1" >
+    live_sub_info_id, house_id, houseName, house_statu, pub_user_id,pub_user_type, verify_flag, sub_begin_time
+  </sql>
+  <!--  -->
+  <select id="getAgencySelfScheduleByUserId" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+    select 
+    *
+    from tbl_live_sub_info
+    where pub_user_id = #{0,jdbcType=VARCHAR}
+    and verify_flag = 1
+    and (sub_begin_time &gt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}+1)) 
+    group by sub_begin_time
+  </select>
+
+  <!-- 
+  <cache eviction="LRU" type="com.miniProject.util.MybatisRedisCache" />
+  -->
+    <select id="getAgencyScheduleByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from  
+    AgencyScheduleVerify
+    where pub_user_id = #{0,jdbcType=VARCHAR}
+    and verify_flag=#{1,jdbcType=INTEGER}
+    and sub_begin_time > date_add(NOW() , interval - 29 minute)
+  	</select>
+  
+    <select id="getDiffHouseId" resultMap="BaseResultMap1" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List1" />
+    from AgencyScheduleVerify
+    where verify_flag= 1  and pub_user_id = #{0,jdbcType=VARCHAR} and sub_begin_time > date_add(NOW() , interval - 29 minute)
+	group by house_id ,
+    sub_begin_time order by sub_begin_time
+  </select>
+  
+  
+   <select id="getWaitDiffHouseId" resultMap="BaseResultMap1" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List1" />
+    from AgencyScheduleVerify
+    where verify_flag= 0  and pub_user_id = #{0,jdbcType=VARCHAR} and sub_begin_time > date_add(NOW() , interval - 29 minute)
+	group by house_id ,
+    sub_begin_time  order by sub_begin_time
+  </select>
+  
+  
+<!--    <select id="getAgencySchedulesubUserByHouseId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+	sub_user_id,portrait_file_name,sub_user_name, sub_phone_number 
+    from AgencyScheduleVerify
+    where verify_flag=#{0,jdbcType=INTEGER}
+	group by pub_house_id = #{1 , jdbcType=VARCHAR},
+    sub_begin_time = #{2 , jdbcType=TIMESTAMP}
+  </select>
+   -->
+  
+  <select id="getAgencyScheduleCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+    COUNT(*)
+    from UserScheduleVerify
+    where pub_user_id = #{0,jdbcType=VARCHAR}
+    and verify_flag=#{1,jdbcType=INTEGER}
+   </select>
+  
+  <update id="updateBySublicKeySelective" parameterType="com.miniProject.model.AgencyScheduleVerifyForm" >
+    update AgencyScheduleVerify
+    <set >
+      <if test="verify_flag != null" >
+        verify_flag = #{verifyFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where pub_user_id = #{pubUserId,jdbcType=VARCHAR}
+    and house_id=#{houseId,jdbcType=VARCHAR}
+    and sub_begin_time=#{subBeginTime,jdbcType="TIMESTAMP"}
+  </update>
+  
+  
+  
+    <update id="cancelorRejectHouseLiveBySelf" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    <set >
+      <if test="verifyFlag != null" >
+        verify_flag = 2,
+      </if>
+      <if test="subEndTime != null" >
+        sub_end_time = now(),
+      </if>
+    </set>
+    <where>
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR} 
+        and
+        sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP}
+        and
+        verify_flag  = #{verifyFlag,jdbcType=INTEGER}
+    </where>
+  </update>
+  
+  
+    <update id="verifyHouseLive" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    update tbl_live_sub_info
+    <set >
+      <if test="verifyFlag != null" >
+        verify_flag = 1,
+      </if>
+    </set>
+    <where>
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR} 
+        and
+        sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP}
+        and
+        verify_flag  = #{verifyFlag,jdbcType=INTEGER}
+    </where>
+  </update>
+  
+   <select id="getSubInfoByliveUserAndTime" resultMap="BaseResultMap2" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    select 
+     *
+    from tbl_live_sub_info
+    where
+    <if test="pubUserId != null" >
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR} and
+    </if> 
+    <if test="subBeginTime != null" >
+        sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP} and
+    </if>
+    verify_flag=#{verifyFlag,jdbcType=INTEGER}
+  	</select>
+  	
+   
+    <select id="getSubInfoByHouseId" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+    select 
+     *
+    from tbl_live_sub_info
+    where
+    house_id = #{houseId,jdbcType=VARCHAR} and verify_flag &lt; 2 and sub_begin_time > NOW()
+  	</select>
+  	
+    <update id="cancelSubInfoByHouseId"  parameterType="java.lang.String" >
+    update 
+    tbl_live_sub_info
+    set verify_flag = 2
+    where
+    house_id = #{houseId,jdbcType=VARCHAR} and verify_flag &lt; 2 and sub_begin_time > NOW()
+  	</update>
+  	
+    
+    <select id="getTimeIntervalSubInfoByHouseId" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+    select 
+     *
+    from tbl_live_sub_info
+    where
+    house_id = #{houseId,jdbcType=VARCHAR} and verify_flag = 1 and sub_begin_time between date_add(NOW() , interval - 30 minute) and date_add(NOW() , interval + 5 minute)
+  	</select>
+  	
+    
+    <select id="getlSubInfoByTimeInterval" resultMap="BaseResultMap2" >
+    select 
+    * 
+    from tbl_live_sub_info 
+    where 
+    sub_begin_time between date_add(NOW()  , interval + 2 minute) and date_add(NOW()  , interval + 10 minute)
+    and verify_flag = 1 group by pub_user_id
+  	</select>
+    
+    
+   
+<!--      <select id="getOwnSubcHouseLiveList" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+    select 
+    from tbl_live_sub_info
+    where house_id = #{houseId,jdbcType=VARCHAR} and sub_user_id = #{subUserId,jdbcType=VARCHAR}
+     and (sub_begin_time &gt; ADDDATE(CURDATE(),#{subBeginTime,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{subBeginTime,jdbcType=INTEGER}+1)) 
+     and verify_flag=0
+     group by sub_begin_time
+  </select> -->
+  
+  <select id="getOwnSubcHouseLiveCount" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+    COUNT(*)
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} and verify_flag=0   
+     and (sub_begin_time &gt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}+1)) 
+     group by sub_begin_time
+  </select>
+  
+  <select id="getOwnSubcHouseLiveList" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+    select 
+     *
+    from tbl_live_sub_info
+    where house_id = #{0,jdbcType=VARCHAR} and verify_flag = 1
+    and (sub_begin_time &gt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}) and sub_begin_time &lt; ADDDATE(CURDATE(),#{1,jdbcType=INTEGER}+1)) 
+    group by sub_begin_time
+  </select>
+  
+  <insert id="addNewHouseLiveByAgency"  parameterType="java.lang.String" >
+    insert into tbl_live_sub_info(live_sub_info_id,house_id,pub_user_id,sub_user_id,sub_begin_time,verify_flag)
+    values (#{liveSubInfoId,jdbcType=VARCHAR},#{houseId,jdbcType=VARCHAR}, #{pubUserId,jdbcType=VARCHAR}, #{subUserId,jdbcType=VARCHAR}
+    , #{subBeginTime,jdbcType=TIMESTAMP}, #{verifyFlag,jdbcType=INTEGER})
+  </insert>
+  <select id="getSubInfoByliveUserAndTimeAndHouse" resultMap="BaseResultMap2" parameterType="com.miniProject.model.UserSubcHouseLiveForm" >
+    select 
+     *
+    from tbl_live_sub_info
+    where
+    <if test="pubUserId != null" >
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR} and
+    </if> 
+    <if test="subBeginTime != null" >
+        sub_begin_time = #{subBeginTime,jdbcType=TIMESTAMP} and
+    </if>
+   	 verify_flag=#{verifyFlag,jdbcType=INTEGER}
+   	 and house_id=#{houseId,jdbcType=VARCHAR}
+  	</select>
+  
+</mapper>

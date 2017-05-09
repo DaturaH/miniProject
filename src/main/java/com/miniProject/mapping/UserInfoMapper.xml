@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.UserInfo" >
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="passwd" property="passwd" jdbcType="VARCHAR" />
+    <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+    <result column="portrait_file_name" property="portraitFileName" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="accout_build_time" property="accoutBuildTime" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, user_name, token, passwd, phone_number, portrait_file_name, user_type, accout_build_time, 
+    description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_user_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPhoneNumber" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_user_info
+    where phone_number = #{phoneNumber,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_user_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.miniProject.model.UserInfo" >
+    insert into tbl_user_info (user_id, user_name, token, 
+      passwd, phone_number, portrait_file_name, 
+      user_type, accout_build_time, description
+      )
+    values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, 
+      #{passwd,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{portraitFileName,jdbcType=VARCHAR}, 
+      #{userType,jdbcType=INTEGER}, #{accoutBuildTime,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.UserInfo" >
+    insert into tbl_user_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="passwd != null" >
+        passwd,
+      </if>
+      <if test="phoneNumber != null" >
+        phone_number,
+      </if>
+      <if test="portraitFileName != null" >
+        portrait_file_name,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="accoutBuildTime != null" >
+        accout_build_time,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null" >
+        #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null" >
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="portraitFileName != null" >
+        #{portraitFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="accoutBuildTime != null" >
+        #{accoutBuildTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miniProject.model.UserInfo" >
+    update tbl_user_info
+    <set >
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null" >
+        passwd = #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null" >
+        phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="portraitFileName != null" >
+        portrait_file_name = #{portraitFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="accoutBuildTime != null" >
+        accout_build_time = #{accoutBuildTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miniProject.model.UserInfo" >
+    update tbl_user_info
+    set user_name = #{userName,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      passwd = #{passwd,jdbcType=VARCHAR},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      portrait_file_name = #{portraitFileName,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=INTEGER},
+      accout_build_time = #{accoutBuildTime,jdbcType=TIMESTAMP},
+      description = #{description,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  <!-- 获取用户头像 -->
+   <select id="getPortrait" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    portrait_file_name
+    from tbl_user_info
+    where phone_number = #{0,jdbcType=VARCHAR}
+  </select>
+</mapper>

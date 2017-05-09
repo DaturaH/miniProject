@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.CommunityInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.CommunityInfo" >
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="CHAR" />
+    <result column="district" property="district" jdbcType="CHAR" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="lng" property="lng" jdbcType="DOUBLE" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    name, city, district, lat, lng, address
+  </sql>
+  
+  <select id="locating" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_community_info
+    where name like "%"#{part,jdbcType=VARCHAR}"%" limit 0,1
+  </select>
+  
+  <select id="match" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    name
+    from tbl_community_info
+    where name like "%"#{part,jdbcType=VARCHAR}"%" limit 0,10
+  </select>
+  
+  <select id="matchBegin" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    name
+    from tbl_community_info
+    where name like #{part,jdbcType=VARCHAR}"%" limit 0,10
+  </select>
+  
+  <insert id="insert" parameterType="com.miniProject.model.CommunityInfo" >
+    insert into tbl_community_info (name, city, district, 
+      lat, lng, address)
+    values (#{name,jdbcType=VARCHAR}, #{city,jdbcType=CHAR}, #{district,jdbcType=CHAR}, 
+      #{lat,jdbcType=DOUBLE}, #{lng,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.CommunityInfo" >
+    insert into tbl_community_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="district != null" >
+        district,
+      </if>
+      <if test="lat != null" >
+        lat,
+      </if>
+      <if test="lng != null" >
+        lng,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=CHAR},
+      </if>
+      <if test="district != null" >
+        #{district,jdbcType=CHAR},
+      </if>
+      <if test="lat != null" >
+        #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="lng != null" >
+        #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

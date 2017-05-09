@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miniProject.dao.UserHouseFormMapper">
+  <resultMap id="BaseResultMap" type="com.miniProject.model.UserHouseForm">
+    <id column="house_id" jdbcType="VARCHAR" property="houseId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="house_state" jdbcType="BIT" property="houseState" />
+    <result column="live_state" jdbcType="BIT" property="liveState" />
+    <result column="video_state" jdbcType="VARCHAR" property="videoState" />
+    <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="village_name" jdbcType="VARCHAR" property="villageName" />
+    <result column="house_type" jdbcType="VARCHAR" property="houseType" />
+    <result column="area" jdbcType="INTEGER" property="area" />
+    <result column="sharing_way" jdbcType="INTEGER" property="sharingWay" />
+    <result column="house_orientation" jdbcType="INTEGER" property="houseOrientation" />
+    <result column="pay_way" jdbcType="INTEGER" property="payWay" />
+    <result column="decoration" jdbcType="INTEGER" property="decoration" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="fitment" jdbcType="INTEGER" property="fitment" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="blockname" jdbcType="VARCHAR" property="blockname" />
+    <result column="enabled" jdbcType="BIT" property="enabled" />
+    <result column="position" property="position" jdbcType="OTHER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    house_id, user_id, house_state, live_state, video_state, latitude, longitude, location, 
+    village_name, house_type, area, sharing_way, house_orientation, pay_way, decoration, 
+    price, fitment, contact, description, title, blockname, enabled, position
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_house_info
+    where house_id = #{houseId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tbl_house_info
+    where house_id = #{houseId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.miniProject.model.UserHouseForm" >
+    insert into tbl_house_info (house_id, user_id, house_state, 
+      live_state, video_state, latitude, 
+      longitude, location, village_name, 
+      house_type, area, sharing_way, 
+      house_orientation, pay_way, decoration, 
+      price, fitment, contact, 
+      description, title, blockname, 
+      enabled, position)
+    values (#{houseId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{houseState,jdbcType=BIT}, 
+      #{liveState,jdbcType=BIT}, #{videoState,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE}, 
+      #{longitude,jdbcType=DOUBLE}, #{location,jdbcType=VARCHAR}, #{villageName,jdbcType=VARCHAR}, 
+      #{houseType,jdbcType=VARCHAR}, #{area,jdbcType=INTEGER}, #{sharingWay,jdbcType=INTEGER}, 
+      #{houseOrientation,jdbcType=INTEGER}, #{payWay,jdbcType=INTEGER}, #{decoration,jdbcType=INTEGER}, 
+      #{price,jdbcType=INTEGER}, #{fitment,jdbcType=INTEGER}, #{contact,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{blockname,jdbcType=VARCHAR}, 
+      #{enabled,jdbcType=BIT}, #{position,jdbcType=OTHER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.UserHouseForm">
+    insert into tbl_house_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="houseId != null">
+        house_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="houseState != null">
+        house_state,
+      </if>
+      <if test="liveState != null">
+        live_state,
+      </if>
+      <if test="videoState != null">
+        video_state,
+      </if>
+      <if test="latitude != null">
+        latitude,
+      </if>
+      <if test="longitude != null">
+        longitude,
+      </if>
+      <if test="location != null">
+        location,
+      </if>
+      <if test="villageName != null">
+        village_name,
+      </if>
+      <if test="houseType != null">
+        house_type,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="sharingWay != null">
+        sharing_way,
+      </if>
+      <if test="houseOrientation != null">
+        house_orientation,
+      </if>
+      <if test="payWay != null">
+        pay_way,
+      </if>
+      <if test="decoration != null">
+        decoration,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="fitment != null">
+        fitment,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="blockname != null">
+        blockname,
+      </if>
+      <if test="enabled != null">
+        enabled,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="houseId != null">
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseState != null">
+        #{houseState,jdbcType=BIT},
+      </if>
+      <if test="liveState != null">
+        #{liveState,jdbcType=BIT},
+      </if>
+      <if test="videoState != null">
+        #{videoState,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="villageName != null">
+        #{villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="houseType != null">
+        #{houseType,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=INTEGER},
+      </if>
+      <if test="sharingWay != null">
+        #{sharingWay,jdbcType=INTEGER},
+      </if>
+      <if test="houseOrientation != null">
+        #{houseOrientation,jdbcType=INTEGER},
+      </if>
+      <if test="payWay != null">
+        #{payWay,jdbcType=INTEGER},
+      </if>
+      <if test="decoration != null">
+        #{decoration,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=INTEGER},
+      </if>
+      <if test="fitment != null">
+        #{fitment,jdbcType=INTEGER},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="blockname != null">
+        #{blockname,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null">
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=OTHER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miniProject.model.UserHouseForm">
+    update tbl_house_info
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseState != null">
+        house_state = #{houseState,jdbcType=BIT},
+      </if>
+      <if test="liveState != null">
+        live_state = #{liveState,jdbcType=BIT},
+      </if>
+      <if test="videoState != null">
+        video_state = #{videoState,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null">
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="longitude != null">
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="villageName != null">
+        village_name = #{villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="houseType != null">
+        house_type = #{houseType,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=INTEGER},
+      </if>
+      <if test="sharingWay != null">
+        sharing_way = #{sharingWay,jdbcType=INTEGER},
+      </if>
+      <if test="houseOrientation != null">
+        house_orientation = #{houseOrientation,jdbcType=INTEGER},
+      </if>
+      <if test="payWay != null">
+        pay_way = #{payWay,jdbcType=INTEGER},
+      </if>
+      <if test="decoration != null">
+        decoration = #{decoration,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=INTEGER},
+      </if>
+      <if test="fitment != null">
+        fitment = #{fitment,jdbcType=INTEGER},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="blockname != null">
+        blockname = #{blockname,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null">
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=OTHER},
+      </if>
+    </set>
+    where house_id = #{houseId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miniProject.model.UserHouseForm">
+    update tbl_house_info
+    set user_id = #{userId,jdbcType=VARCHAR},
+      house_state = #{houseState,jdbcType=BIT},
+      live_state = #{liveState,jdbcType=BIT},
+      video_state = #{videoState,jdbcType=VARCHAR},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      location = #{location,jdbcType=VARCHAR},
+      village_name = #{villageName,jdbcType=VARCHAR},
+      house_type = #{houseType,jdbcType=VARCHAR},
+      area = #{area,jdbcType=INTEGER},
+      sharing_way = #{sharingWay,jdbcType=INTEGER},
+      house_orientation = #{houseOrientation,jdbcType=INTEGER},
+      pay_way = #{payWay,jdbcType=INTEGER},
+      decoration = #{decoration,jdbcType=INTEGER},
+      price = #{price,jdbcType=INTEGER},
+      fitment = #{fitment,jdbcType=INTEGER},
+      contact = #{contact,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      blockname = #{blockname,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=BIT},
+      position = #{position,jdbcType=OTHER}
+    where house_id = #{houseId,jdbcType=VARCHAR}
+  </update>
+	
+  <!-- 修改标记位live_state 房源是否直播中 true表示直播中，false表示未直播 -->
+  <update id="updateHouseLiveState">
+    update tbl_house_info
+    set live_state = #{2,jdbcType=BIT}
+    where user_id = #{0,jdbcType=VARCHAR}
+    and house_id=#{1,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 修改昵称时，根据userId修改contact -->
+  <update id="updateContactByPrimaryKey">
+    update tbl_house_info
+    set contact = #{1,jdbcType=VARCHAR}
+    where user_id = #{0,jdbcType=VARCHAR}
+  </update>
+  <!-- 添加结束 -->
+  <!-- add by LIMIN : 通过userId查询收藏的房源数量 -->
+  <select id="getPubHouseCountByUserId" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+    COUNT(*)
+    from tbl_house_info
+    where user_id = #{0,jdbcType=VARCHAR}
+  </select>
+  <!-- add end -->
+  <!-- 修改房源直播状态 -->
+  <update id="modifyHouseLiveFlagByHouseId">
+    update tbl_house_info
+    set live_state = #{1,jdbcType=BIT}
+    where house_id = #{0,jdbcType=VARCHAR}
+  </update>
+</mapper>

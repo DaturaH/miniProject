@@ -1,0 +1,7 @@
+this is the backend development of mini_project 
+finished the init project structure based on springMVC & mybatis
+could not read the spring-mybatis.xml in web.xml and copy this content to spring-mvc.xml 
+anyone could fix this problem if time permits
+
+
+romote server IP:223.252.223.10

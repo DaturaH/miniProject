@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miniProject.dao.HouseLiveVerifyFormMapper" >
+  <resultMap id="BaseResultMap" type="com.miniProject.model.HouseLiveVerifyForm" >
+    <id column="live_verify_info_id" property="liveVerifyInfoId" jdbcType="VARCHAR" />
+    <result column="house_id" property="houseId" jdbcType="VARCHAR" />
+    <result column="pub_user_id" property="pubUserId" jdbcType="VARCHAR" />
+    <result column="sub_user_id" property="subUserId" jdbcType="VARCHAR" />
+    <result column="verify_begin_time" property="verifyBeginTime" jdbcType="TIMESTAMP" />
+    <result column="verify_end_time" property="verifyEndTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    live_verify_info_id, house_id, pub_user_id, sub_user_id, verify_begin_time, verify_end_time
+  </sql>
+  <select id="selectHouseLiveTime" resultType="java.util.Date" parameterType="java.lang.String" >
+    select 
+    DISTINCT verify_begin_time,
+    from tbl_live_verify_info
+    where house_id = #{houseid,jdbcType=VARCHAR}
+    and verify_begin_time > (select  unix_timestamp(NOW()))
+  </select>
+
+  <select id="getOwnVerifyTimeListById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    *
+    from tbl_live_verify_info
+    where house_id = #{0,jdbcType=VARCHAR} and sub_user_id = #{1,jdbcType=VARCHAR}
+     and verify_begin_time > (select  unix_timestamp(NOW())) group by verify_begin_time
+  </select>
+  <select id="getOtherVerifyTimeListById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    *
+    from tbl_live_verify_info
+    where house_id = #{0,jdbcType=VARCHAR} and sub_user_id != #{1,jdbcType=VARCHAR}
+    and verify_begin_time > (select  unix_timestamp(NOW())) group by verify_begin_time
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_live_verify_info
+    where live_verify_info_id = #{liveVerifyInfoId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_live_verify_info
+    where live_verify_info_id = #{liveVerifyInfoId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.miniProject.model.HouseLiveVerifyForm" >
+    insert into tbl_live_verify_info (live_verify_info_id, house_id, pub_user_id, 
+      sub_user_id, verify_begin_time, verify_end_time
+      )
+    values (#{liveVerifyInfoId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{pubUserId,jdbcType=VARCHAR}, 
+      #{subUserId,jdbcType=VARCHAR}, #{verifyBeginTime,jdbcType=TIMESTAMP}, #{verifyEndTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.miniProject.model.HouseLiveVerifyForm" >
+    insert into tbl_live_verify_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="liveVerifyInfoId != null" >
+        live_verify_info_id,
+      </if>
+      <if test="houseId != null" >
+        house_id,
+      </if>
+      <if test="pubUserId != null" >
+        pub_user_id,
+      </if>
+      <if test="subUserId != null" >
+        sub_user_id,
+      </if>
+      <if test="verifyBeginTime != null" >
+        verify_begin_time,
+      </if>
+      <if test="verifyEndTime != null" >
+        verify_end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="liveVerifyInfoId != null" >
+        #{liveVerifyInfoId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pubUserId != null" >
+        #{pubUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserId != null" >
+        #{subUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyBeginTime != null" >
+        #{verifyBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyEndTime != null" >
+        #{verifyEndTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miniProject.model.HouseLiveVerifyForm" >
+    update tbl_live_verify_info
+    <set >
+      <if test="houseId != null" >
+        house_id = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pubUserId != null" >
+        pub_user_id = #{pubUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserId != null" >
+        sub_user_id = #{subUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyBeginTime != null" >
+        verify_begin_time = #{verifyBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyEndTime != null" >
+        verify_end_time = #{verifyEndTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where live_verify_info_id = #{liveVerifyInfoId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miniProject.model.HouseLiveVerifyForm" >
+    update tbl_live_verify_info
+    set house_id = #{houseId,jdbcType=VARCHAR},
+      pub_user_id = #{pubUserId,jdbcType=VARCHAR},
+      sub_user_id = #{subUserId,jdbcType=VARCHAR},
+      verify_begin_time = #{verifyBeginTime,jdbcType=TIMESTAMP},
+      verify_end_time = #{verifyEndTime,jdbcType=TIMESTAMP}
+    where live_verify_info_id = #{liveVerifyInfoId,jdbcType=VARCHAR}
+  </update>
+</mapper>
